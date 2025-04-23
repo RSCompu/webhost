@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INVOICE</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 40px;
+      position: relative;
+    }
+    .invoice-box {
+      border: 1px solid #000;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .logo img {
+      max-width: 200px;
+    }
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.06;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .watermark img {
+      width: 1000px;
+      max-width: 90vw;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #000;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    .total {
+      text-align: right;
+      font-weight: bold;
+    }
+    .print-button, .add-row-button, .calculate-button {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .print-button button,
+    .add-row-button button,
+    .calculate-button button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .page-number {
+      text-align: right;
+      font-size: 12px;
+      margin-top: 30px;
+    }
+    @media print {
+      @page {
+        size: A4;
+        margin: 20mm;
+      }
+      body {
+        margin: 0;
+      }
+      .invoice-box {
+        box-shadow: none;
+        border: none;
+      }
+      .print-button,
+      .add-row-button,
+      .calculate-button {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body onload="setDate()">
+  <div class="watermark">
+    <img src="logo.png" alt="Watermark Logo">
+  </div>
+  <div class="invoice-box">
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
+    </div>
+    <h2>Jubawer computer</h2>
+    
+    <p><strong>দোকানের নাম:</strong>Jubawer computer</p>
+    <p><strong>ঠিকানা:</strong> কুলিয়ারচর, কিশোরগঞ্জ</p>
+    <p><strong>ফোন:</strong> 01718-728811, 01846-808045</p>
+    <p><strong>তারিখ:</strong> <span id="current-date"></span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>প্রোডাক্টের নাম</th>
+          <th>পরিমাণ</th>
+          <th>মূল্য (প্রতি ইউনিট)</th>
+          <th>ওয়ারেন্টি</th>
+          <th>মোট</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="add-row-button">
+      <button onclick="addRow()">নতুন প্রোডাক্ট যোগ করুন</button>
+    </div>
+
+    <div class="calculate-button">
+      <button onclick="calculateTotal()">মোট হিসাব করুন</button>
+    </div>
+
+    <p class="total">মোট: <span contenteditable="true">মোট লিখুন</span> টাকা</p>
+
+    <div class="print-button">
+      <button onclick="window.print()">প্রিন্ট করুন</button>
+    </div>
+    <div class="page-number">
+      পৃষ্ঠা: <script>document.write(1);</script>
+    </div>
+  </div>
+
+  <script>
+    function setDate() {
+      const dateElement = document.getElementById("current-date");
+      const today = new Date();
+      const formatted = today.getDate().toString().padStart(2, '0') + '/' +
+                        (today.getMonth()+1).toString().padStart(2, '0') + '/' +
+                        today.getFullYear();
+      dateElement.textContent = formatted;
+    }
+
+    function addRow() {
+      const table = document.querySelector("table tbody");
+      const newRow = table.insertRow();
+      for (let i = 0; i < 5; i++) {
+        const newCell = newRow.insertCell();
+        newCell.contentEditable = "true";
+      }
+    }
+
+    function calculateTotal() {
+      const rows = document.querySelectorAll("table tbody tr");
+      let total = 0;
+      rows.forEach(row => {
+        const amountCell = row.cells[4];
+        const value = parseFloat(amountCell.innerText) || 0;
+        total += value;
+      });
+      document.querySelector(".total span").innerText = total.toFixed(2);
+    }
+  </script>
+</body>
+</html>
