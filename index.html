@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cyberpunk Hack Terminal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body, html {
+      height: 100%;
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .overlay {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+    }
+
+    #showBoxBtn {
+      padding: 15px 30px;
+      background-color: #0f0;
+      border: none;
+      border-radius: 5px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0f0;
+      transition: all 0.5s ease;
+      animation: glowBtn 1.5s infinite alternate;
+    }
+
+    #showBoxBtn:hover {
+      background-color: #0c0;
+      box-shadow: 0 0 20px #0f0;
+    }
+
+    .popup-box {
+      margin-top: 20px;
+      width: 500px;
+      padding: 60px;
+      border: 2px solid #0f0;
+      background: rgba(0, 0, 0, 0.9);
+      color: #0f0;
+      border-radius: 15px;
+      box-shadow: 0 0 40px #0f0;
+      transform: scale(0.8);
+      opacity: 0;
+      transition: all 0.6s ease;
+      text-align: center;
+      display: none;
+      animation: glowBox 2s infinite alternate;
+    }
+
+    .popup-box.show {
+      display: block;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .typewriter {
+      font-size: 2rem;
+      overflow: hidden;
+      border-right: 2px solid #0f0;
+      white-space: nowrap;
+      margin: 0 auto;
+      letter-spacing: 2px;
+      animation: typing 3s steps(20, end), blink-caret 0.75s step-end infinite;
+      /* hacker would effect */
+      background: linear-gradient(90deg, #0f0, #0a0, #0f0);
+      background-size: 200% auto;
+      color: #0f0;
+      animation: typing 3s steps(20, end), blink-caret 0.75s step-end infinite, hacker-glow 2s linear infinite;
+    }
+
+    @keyframes hacker-glow {
+      0% {
+        background-position: 200% center;
+      }
+      100% {
+        background-position: -200% center;
+      }
+    }
+
+    .terminal-box {
+      margin-top: 20px;
+      padding: 20px;
+      font-size: 1rem;
+      border: 2px solid #0f0;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.95);
+      color: #0f0;
+      box-shadow: 0 0 20px #0f0;
+      width: 500px;
+      height: 200px;
+      overflow-y: hidden;
+      display: none;
+      font-family: monospace;
+      text-align: left;
+      position: relative;
+    }
+
+    .terminal-box.show { display: block; }
+
+    #terminalContent {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .cracked-box {
+      margin-top: 20px;
+      padding: 15px 25px;
+      background-color: rgba(0, 255, 0, 0.1);
+      border: 2px solid #0f0;
+      color: #0f0;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 10px;
+      box-shadow: 0 0 25px #0f0;
+      display: none;
+      animation: glowBox 2s infinite alternate;
+    }
+
+    .cracked-box.show {
+      display: block;
+    }
+
+    @keyframes glowBtn {
+      from { box-shadow: 0 0 10px #0f0, 0 0 20px #0f0; }
+      to { box-shadow: 0 0 20px #0f0, 0 0 40px #0f0; }
+    }
+
+    @keyframes glowBox {
+      0% { box-shadow: 0 0 20px #0f0; }
+      100% { box-shadow: 0 0 40px #0f0; }
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: #0f0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay">
+    <button id="showBoxBtn">CLICK ME</button>
+
+    <div class="popup-box" id="popupBox">
+      <div class="typewriter">Hackir World</div>
+    </div>
+
+    <div class="cracked-box" id="crackedBox">PASSWORD is cracked</div>
+
+    <div class="terminal-box" id="terminalBox">
+      <div class="terminal-content" id="terminalContent"></div>
+    </div>
+
+    <!-- Embedded audio with fallback -->
+    <audio id="hackingSound" preload="auto" loop>
+      <source src="https://files.catbox.moe/5c7l5f.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
+  <script>
+    const btn = document.getElementById('showBoxBtn');
+    const popup = document.getElementById('popupBox');
+    const terminalBox = document.getElementById('terminalBox');
+    const terminalContent = document.getElementById('terminalContent');
+    const crackedBox = document.getElementById('crackedBox');
+    const hackingSound = document.getElementById('hackingSound');
+
+    const messages = [
+      "> Connecting to server...",
+      "> Bypassing firewall...",
+      "> Accessing mainframe...",
+      "> Downloading credentials...",
+      "> Decrypting password...",
+      "> Cracking hash...",
+      "> Brute-forcing RSA key...",
+      "> Validating login...",
+      "> Logging in as root...",
+    ];
+
+    let index = 0;
+
+    btn.addEventListener('click', () => {
+      btn.style.opacity = '0';
+      btn.style.pointerEvents = 'none';
+
+      // try to play sound
+      hackingSound.volume = 0.5;
+      hackingSound.play().catch((e) => {
+        console.warn("Autoplay blocked:", e);
+      });
+
+      setTimeout(() => {
+        btn.style.display = 'none';
+        popup.classList.add('show');
+
+        setTimeout(() => {
+          terminalBox.classList.add('show');
+          crackedBox.classList.add('show');
+          startLoop();
+        }, 1000);
+      }, 500);
+    });
+
+    function startLoop() {
+      setInterval(() => {
+        const line = document.createElement('div');
+        line.textContent = messages[index];
+        terminalContent.appendChild(line);
+        terminalContent.scrollTop = terminalContent.scrollHeight;
+        index = (index + 1) % messages.length;
+
+        // Limit terminal lines to last 10
+        if (terminalContent.children.length > 10) {
+          terminalContent.removeChild(terminalContent.firstChild);
+        }
+      }, 400);  // স্পিড 400 মিলিসেকেন্ডে সেট
+    }
+  </script>
+</body>
+</html>
